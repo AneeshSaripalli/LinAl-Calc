@@ -145,9 +145,22 @@ int main()
 
             m.inverse()->print();
         }
-        else
+        else if(input == "dot")
+        {
+            Vector v1 = Vector();
+            Vector v2 = Vector();
+
+            double dot = v1 * v2;
+
+            cout << "Vector 1 dot Vector 2 = " << setw(10) << setprecision(5) << dot << endl;
+        }
+        else if(input == "help")
         {
             help();
+        }
+        else
+        {
+            cout << "Command not recognized. Type \"help\" for help." << endl;
         }
 
     }
