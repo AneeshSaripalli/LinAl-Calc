@@ -162,7 +162,7 @@ Vector* Vector::operator-(Vector& other)
     return diff;
 }
 
-Vector* Vector::operator/(double scalar)
+Vector* Vector::operator / (double scalar)
 {
     return (*this) * (1.0 / scalar);
 }
@@ -198,6 +198,20 @@ void Vector::round_off()
             (*this)[i] = 0;
         }
     }
+}
+
+Vector* Vector::unit_vector()
+{
+    double mag = 0;
+
+    for(int i = 0; i < length; i++)
+    {
+        mag += values[i] * values[i];
+    }
+
+    Vector* scaled_down = (*this) / mag;
+
+    return scaled_down;
 }
 
 Vector* Vector::operator*(double scalar)

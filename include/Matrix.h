@@ -8,6 +8,8 @@ class Matrix
 public:
     int rows = 0, cols = 0;
 
+    static double determinant(Matrix* mat);
+
     Matrix(int rows, int cols);
     Matrix();
     ~Matrix();
@@ -16,6 +18,11 @@ public:
     Matrix* add(Matrix& otherMatrix);
     Matrix* subtract(Matrix& otherMatrix);
     Matrix* gaussianReducedForm();
+    Matrix* transpose();
+    Matrix* inverse();
+    Matrix* submatrix(int tlR, int tlC, int rows, int cols);
+
+    Vector* solveUpperTriangular();
 
     int valueAt(int row, int col);
     int countPivots();
@@ -28,11 +35,6 @@ public:
     void appendColumn(Vector& v);
     void appendRow(Vector& v);
     void round_off();
-
-    Matrix* transpose();
-    Matrix* inverse();
-    Matrix* submatrix(int tlR, int tlC, int rows, int cols);
-    Vector* solveUpperTriangular();
 
     Vector& operator [](int index);
     Matrix* operator *(Matrix& other);

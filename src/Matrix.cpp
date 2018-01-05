@@ -35,21 +35,58 @@ Matrix::Matrix()
     matrix = new Vector*[rows];
 
     cout << "Enter values in left to right order by row up to down" << endl;
+
+    int total = 0;
+
+    cout << ">> ";
+
     for(int i = 0; i < rows; i++)
     {
         Vector* newVectorPtr = new Vector(cols);
 
         for(int j = 0; j < cols; j++)
         {
+            total++;
+
             int val;
-            cout << ">> ";
             cin >> val;
+
+            char a;
+            a = cin.get();
+
+            if(total != rows * cols && a == '\n')
+            {
+                cout << ">> ";
+            }
 
             (*newVectorPtr)[j] = val;
         }
 
         matrix[i] = newVectorPtr;
     }
+}
+
+double Matrix::determinant(Matrix* mat)
+{
+    if(mat->rows != mat->cols)
+    {
+        return 0;
+    }
+
+    Matrix* reduced = mat->gaussianReducedForm();
+
+    int min_dim = min(reduced->rows, reduced->cols);
+
+    double det = 1;
+
+    for(int i = 0; i < min_dim; i++)
+    {
+        det *= (*reduced)[i][i];
+    }
+
+    delete reduced;
+
+    return det;
 }
 
 Matrix* identity(int side)

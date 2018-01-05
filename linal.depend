@@ -1,0 +1,20 @@
+# depslib dependency file v1.0
+1515125964 source:c:\users\aneesh\desktop\executables and shit\workspace\c++\lin al\main.cpp
+	<string>
+	<stdlib.h>
+	"Matrix.h"
+
+1515119642 c:\users\aneesh\desktop\executables and shit\workspace\c++\lin al\include\matrix.h
+	"Vector.h"
+
+1515125217 c:\users\aneesh\desktop\executables and shit\workspace\c++\lin al\include\vector.h
+	<iostream>
+	<iomanip>
+	<cmath>
+
+1515126037 source:c:\users\aneesh\desktop\executables and shit\workspace\c++\lin al\src\matrix.cpp
+	"Matrix.h"
+
+1515125308 source:c:\users\aneesh\desktop\executables and shit\workspace\c++\lin al\src\vector.cpp
+	"Vector.h"
+

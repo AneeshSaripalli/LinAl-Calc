@@ -9,5 +9,6 @@ Offers a command line utility for matrix functions.
 - Matrix Rank Calculation
 - Ax = b Solutions
 ## Usage
+- Run "Least Squares.exe"
 - Type a command and continue with the prompts
 - Type "help" for help 

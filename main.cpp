@@ -50,7 +50,17 @@ void solveLeastSquares(Matrix& a, Vector& b)
 
 void help()
 {
-    cout << "HELP IS ON ITS WAY" << endl;
+    cout << "Functional Commands: " << endl;
+    cout << "-- approx_sol || as --> Least squares solution to Ax = B." << endl;
+    cout << "-- least_squares || ls --> Accepts data for least squares regression." << endl;
+    cout << "-- rank --> Returns rank of a matrix" << endl;
+    cout << "-- inverse || inv --> Returns the inverse of the matrix if it exists." << endl;
+    cout << "-- dot --> Returns dot product of two vectors." << endl;
+    cout << "-- determinant || det --> Returns the determinant of the matrix." << endl;
+    cout << "-- basis --> Returns the linearly independent basis of both the column and row spaces." << endl;
+    cout << "-- clear || cls --> Clears the command line prompt screen." << endl;
+    cout << "-- exit --> Exits the command line application." << endl;
+    cout << "-- help --> Prompts these options again." << endl;
 }
 
 
@@ -68,8 +78,16 @@ int pow(int base, int power)
     return result;
 }
 
+void entryMessage()
+{
+    cout << "       ----- Linear Algebra -----" << endl;
+}
+
+
 int main()
 {
+    entryMessage();
+
     string input = "";
 
     do
@@ -138,12 +156,20 @@ int main()
         {
             cout << flush;
             system("CLS");
+            entryMessage();
         }
         else if(input == "inverse" || input == "inv")
         {
             Matrix m = Matrix();
 
-            m.inverse()->print();
+            Matrix* inverse = m.inverse();
+
+            if(inverse != 0)
+            {
+                inverse->print();
+
+                delete inverse;
+            }
         }
         else if(input == "dot")
         {
@@ -154,7 +180,59 @@ int main()
 
             cout << "Vector 1 dot Vector 2 = " << setw(10) << setprecision(5) << dot << endl;
         }
-        else if(input == "help")
+        else if(input == "det" || input == "determinant")
+        {
+            Matrix m = Matrix();
+
+            cout << "The determinant of the matrix is " << Matrix::determinant(&m) << "." << endl;
+        }
+        else if(input == "basis")
+        {
+            Matrix m = Matrix();
+
+            Matrix* reduced = m.gaussianReducedForm();
+
+            int min_dim = min(m.rows, m.cols);
+
+            int* basisV = new int[min_dim];
+
+            for(int i = 0; i < min_dim; i++)
+            {
+                basisV[i] = 0;
+            }
+
+            for(int i = 0; i < min_dim; i++)
+            {
+                if((*reduced)[i][i] != 0)
+                {
+                    basisV[i] = 1;
+                }
+            }
+
+            cout << "Basis Vectors for the Row Space [Read Horizontal]: " << endl;
+
+            for(int i = 0; i < min_dim; i++)
+            {
+                if(basisV[i])
+                {
+                    (*reduced)[i].print();
+                }
+            }
+
+            cout << "Basis Vectors for the Column Space [Read Vertical]: " << endl;
+
+            for(int i = 0; i < min_dim; i++)
+            {
+                if(basisV[i])
+                {
+                    m[i].print();
+                }
+            }
+
+            delete reduced;
+            delete basisV;
+        }
+        else if(input == "help" || input == "?")
         {
             help();
         }

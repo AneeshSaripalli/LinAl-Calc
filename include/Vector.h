@@ -23,6 +23,7 @@ public:
     void round_off();
     double evaluateAsPolynomial(double x);
     bool isZeroVector();
+    Vector* unit_vector();
 
     Vector* operator+(Vector& other);
     Vector* operator-(Vector& other);
