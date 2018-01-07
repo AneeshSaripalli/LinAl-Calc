@@ -12,6 +12,7 @@ public:
     int length;
     Vector(int cols, double* values);
     Vector(int cols);
+
     Vector();
     ~Vector();
 

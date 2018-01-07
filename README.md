@@ -9,6 +9,7 @@ Offers a command line utility for matrix functions.
 - Vector Dot Products
 - Matrix Rank Calculation
 - Ax = b Solutions
+- Define commands to push matrices / vectors to local storage
 ## Usage
 - Run "Least Squares.exe"
 - Type a command and continue with the prompts
