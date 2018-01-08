@@ -1,12 +1,9 @@
-#include <iostream>
-#include <iomanip>
-#include <cmath>
-
 #ifndef VECTOR_H
 #define VECTOR_H
 
+#include "Object.h"
 
-class Vector
+class Vector : public Object
 {
 public:
     int length;
@@ -14,7 +11,7 @@ public:
     Vector(int cols);
 
     Vector();
-    ~Vector();
+    virtual ~Vector();
 
     double& operator[](int index);
     void scale(double scalar);

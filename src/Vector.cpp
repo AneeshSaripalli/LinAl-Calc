@@ -1,10 +1,11 @@
-#include "Vector.h"
+#include "../include/Vector.h"
 
 using namespace std;
 
 Vector* null_vector = new Vector(0, 0);
 
 Vector::Vector(int length, double* values)
+    : Object("vector")
 {
     this->length = length;
     this->values = new double[length];
@@ -16,6 +17,7 @@ Vector::Vector(int length, double* values)
 }
 
 Vector::Vector()
+    : Object("vector")
 {
     int length;
     cout << "Enter the length of the vector: ";
@@ -111,6 +113,7 @@ void Vector::scale(double scalar)
 }
 
 Vector::Vector(int length)
+    : Object("vector")
 {
     this->length = length;
     values = new double[length];

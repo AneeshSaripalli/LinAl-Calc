@@ -1,22 +1,21 @@
-#include <string>
 #include <stdlib.h>
 #include <sstream>
+#include <string>
 #include <map>
 
-#include "Matrix.h"
+#include "include/Object.h"
+#include "include/Matrix.h"
 
 
 using namespace std;
 
 template <class Key, class Value>
 bool keyInMap(map<Key, Value>&m, Key key);
-string typeof(string& s);
+string savedType(string& s);
 bool contains(string findIn, string toFind);
 void process(string& cmd);
 
-map<string, string> typeof_map;
-map<string, Matrix*> matrix_map;
-map<string, Vector*> vector_map;
+map<string, Object*> obj_map;
 
 
 /*
@@ -81,9 +80,9 @@ void help()
     cout << "-- help --> Prompts these options again." << endl;
 }
 
-string typeof(string& s)
+string savedType(string& s)
 {
-    return keyInMap(typeof_map, s) ? typeof_map[s] : "null";
+    return keyInMap(obj_map, s) ? obj_map[s]->name : "null";
 }
 
 void trim(string& s)
@@ -175,67 +174,44 @@ void process(string& cmd)
             return;
         }
 
+        Object* newObj;
+
         if(type == "matrix")
         {
-            Matrix* mat = new Matrix(); // Creates new user defined matrix
-
-            string type = typeof(alias); // Gets the type of the alias
-
-            if(type == "matrix") // If the entry was a matrix, it deletes matrix pointer
-            {
-                cout << alias << " was defined as a matrix. Deleting old pointer." << endl;
-                delete matrix_map[alias];
-
-                matrix_map[alias] = mat; // Sets the matrix pointer to the new matrix
-                typeof_map[alias] = "matrix"; // Sets the data type to matrix
-            }
-            else if(type == "vector") // If the entry was a vector, it deletes the vector pointer
-            {
-                cout << alias << " was defined as a vector. Deleting old pointer." << endl;
-                delete vector_map[alias];
-
-                matrix_map[alias] = mat; // Sets the matrix pointer to the new matrix
-                typeof_map[alias] = "matrix"; // Sets the data type to matrix
-            }
-            else if(type == "null")   // If the alias is new and an object with the name does not exist
-            {
-                cout << "Creating new matrix with type " << alias << endl;
-                matrix_map.insert(std::make_pair(alias, mat));  // Links key alias and matrix pointer mat
-                typeof_map.insert(std::make_pair(alias, "matrix")); // Links key alias and type "matrix"
-            }
-        }
-        else if(type == "vector")
+            newObj = new Matrix();
+        } else if(type == "vector")
         {
-            Vector* vec = new Vector(); // Creates new user defined vector
-
-            string type = typeof(alias);
-
-            if(type == "matrix") // If the entry was a matrix deletes matrix pointer
-            {
-                cout << alias << " was defined as a matrix. Deleting old pointer." << endl;
-                delete matrix_map[alias];
-
-                vector_map[alias] = vec; // Sets the vector pointer to the new vector
-                typeof_map[alias] = "vector"; // Sets the data type to vector
-            }
-            else if(type == "vector") // If the entry was a vector deletes the vector pointer
-            {
-                cout << alias << " was defined as vector. Deleting old pointer." << endl;
-                delete vector_map[alias];
-
-                vector_map[alias] = vec; // Sets the vector pointer to the new vector
-                typeof_map[alias] = "vector"; // Sets the data type to vector
-            }
-            else if(type == "null") // If the alias is new
-            {
-                vector_map.insert(std::make_pair(alias, vec));  // Links key alias and vector pointer mat
-                typeof_map.insert(std::make_pair(alias, "vector")); // Links key alias and type "vector"
-            }
+            newObj = new Vector();
         }
         else
         {
             cout << "Data format not recognized.\n define <matrix/vector> <name>" << endl;
             return;
+        }
+
+        if(savedType(alias) != "null")
+        {
+            Object* obj_ptr = obj_map[alias];
+
+            if(obj_ptr->name == "matrix")
+            {
+                Matrix* m_ptr = (Matrix*) obj_ptr;
+
+                delete m_ptr;
+
+            }else if(obj_ptr->name == "vector")
+            {
+                Vector* v_ptr = (Vector*) v_ptr;
+
+                delete v_ptr;
+            }
+
+            obj_map[alias] = obj_ptr;
+        } else
+        {
+            obj_map.insert(std::make_pair(alias, newObj));
+
+            cout << "Added object with name " << alias << endl;
         }
     }
     else if(command == "recall" || command == "print")
@@ -243,23 +219,24 @@ void process(string& cmd)
         string alias;
         ss >> alias;
 
-        string type = typeof(alias);
+        string type = savedType(alias);
 
-        if(type == "matrix" )
+        if(type != "null")
         {
-            Matrix* mat = matrix_map[alias];
-            mat->print();
+            obj_map[alias]->print();
         }
-        else if(type == "vector")
+        else
         {
-            Vector* vec = vector_map[alias];
-            vec->print();
-        }
-        else if(type == "null")
-        {
-            cout << "Variable " << alias << " not defined during this session." << endl;
+            cout << "Variable \"" << alias << "\" not defined during this session." << endl;
             return;
         }
+    }
+    else if(command == "delete" || command == "del")
+    {
+        string alias;
+        ss >> alias;
+
+
     }
     else if(command == "approx_sol" || command == "as")
     {
@@ -268,10 +245,10 @@ void process(string& cmd)
 
         ss >> mat_a >> vec_b;
 
-        if(typeof(mat_a) == "matrix" && typeof(vec_b) == "vector")
+        if(savedType(mat_a) == "matrix" && savedType(vec_b) == "vector")
         {
-            Matrix* m_ptr = matrix_map[mat_a];
-            Vector* v_ptr = vector_map[vec_b];
+            Matrix* m_ptr = (Matrix*)obj_map[mat_a];
+            Vector* v_ptr = (Vector*)obj_map[vec_b];
 
             solveLeastSquares(*m_ptr, *v_ptr);
         }
@@ -335,9 +312,9 @@ void process(string& cmd)
         string alias;
         ss >> alias;
 
-        if(typeof(alias) == "matrix")
+        if(savedType(alias) == "matrix")
         {
-            Matrix* m_ptr = matrix_map[alias];
+            Matrix* m_ptr = (Matrix*)obj_map[alias];
 
             Matrix* reduced = m_ptr->gaussianReducedForm();
 
@@ -372,9 +349,9 @@ void process(string& cmd)
 
         Matrix* m;
 
-        if(typeof(alias) == "matrix")
+        if(savedType(alias) == "matrix")
         {
-            m = matrix_map[alias];
+            m = (Matrix*)obj_map[alias];
         }
         else
         {
@@ -399,10 +376,10 @@ void process(string& cmd)
 
         double dot = 0;
 
-        if(typeof(v1) == "vector" && typeof(v2) == "vector")
+        if(savedType(v1) == "vector" && savedType(v2) == "vector")
         {
-            v1_ptr = vector_map[v1];
-            v2_ptr = vector_map[v2];
+            v1_ptr = (Vector*) obj_map[v1];
+            v2_ptr = (Vector*) obj_map[v2];
 
         }
         else
@@ -423,9 +400,9 @@ void process(string& cmd)
 
         Matrix* m;
 
-        if(typeof(alias) == "matrix")
+        if(savedType(alias) == "matrix")
         {
-            m = matrix_map[alias];
+            m = (Matrix*) obj_map[alias];
         }
         else
         {
@@ -441,9 +418,9 @@ void process(string& cmd)
 
         Matrix* m;
 
-        if(typeof(alias) == "matrix")
+        if(savedType(alias) == "matrix")
         {
-            m = matrix_map[alias];
+            m = (Matrix*) obj_map[alias];
         }
         else
         {
@@ -504,7 +481,6 @@ void process(string& cmd)
     {
         cout << "Command " << cmd << " not recognized. Type \"help\" for help." << endl;
     }
-
 }
 
 int main()
@@ -529,21 +505,12 @@ int main()
     }
     while (cmd != "exit");
 
-    typeof_map.clear();
-
-    for(auto it = matrix_map.begin(); it != matrix_map.end(); it++)
+    for(auto it = obj_map.begin(); it != obj_map.end(); it++)
     {
         delete it->second;
     }
 
-    matrix_map.clear();
-
-    for(auto it = vector_map.begin(); it != vector_map.end(); it++)
-    {
-        delete it->second;
-    }
-
-    vector_map.clear();
+    obj_map.clear();
 
     return 0;
 }

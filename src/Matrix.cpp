@@ -1,8 +1,9 @@
-#include "Matrix.h"
+#include "../include/Matrix.h"
 
 using namespace std;
 
 Matrix::Matrix(int rows, int cols)
+    : Object("matrix")
 {
     this->rows = rows;
     this->cols = cols;
@@ -18,6 +19,7 @@ Matrix::Matrix(int rows, int cols)
 }
 
 Matrix::Matrix()
+    : Object("matrix")
 {
     int rows, cols;
 

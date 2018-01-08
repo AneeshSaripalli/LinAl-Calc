@@ -1,18 +1,19 @@
-#include "Vector.h"
-
 #ifndef MATRIX_H
 #define MATRIX_H
 
-class Matrix
+#include "Vector.h"
+
+
+class Matrix : public Object
 {
 public:
-    int rows = 0, cols = 0;
+    int rows, cols;
 
     static double determinant(Matrix* mat);
 
     Matrix(int rows, int cols);
     Matrix();
-    ~Matrix();
+    virtual ~Matrix();
 
     Matrix* multiply(Matrix& otherMatrix);
     Matrix* add(Matrix& otherMatrix);
