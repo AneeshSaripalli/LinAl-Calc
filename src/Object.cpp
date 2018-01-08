@@ -12,9 +12,4 @@ Object::~Object()
 
 }
 
-auto Object::convert()
-{
-    if(name == "matrix") {return (Matrix*) this;}
-    else if(name == "vector") {return (Vector*) this;}
-}
 

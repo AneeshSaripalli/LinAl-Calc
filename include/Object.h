@@ -15,7 +15,11 @@ class Object
 
         virtual void print() = 0;
 
-        auto convert() -> Object*;
+        template <class Type>
+        Type* get(Type t)
+        {
+            return (Type*) (this);
+        }
 
     protected:
 

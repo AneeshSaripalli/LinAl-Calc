@@ -27,9 +27,9 @@ stdlib.h
 -
 sstream
 -
-string
--
 map
+-
+typeinfo
 -
 include/Object.h
 C:/Users/Aneesh/Desktop/Executables and Shit/workspace/C++/Lin Al/include/Object.h
@@ -43,6 +43,10 @@ C:/Users/Aneesh/Desktop/Executables and Shit/workspace/C++/Lin Al/include/Matrix
 C:/Users/Aneesh/Desktop/Executables and Shit/workspace/C++/Lin Al/src/Object.cpp
 ../include/Object.h
 C:/Users/Aneesh/Desktop/Executables and Shit/workspace/C++/Lin Al/include/Object.h
+../include/Matrix.h
+C:/Users/Aneesh/Desktop/Executables and Shit/workspace/C++/Lin Al/include/Matrix.h
+../include/Vector.h
+C:/Users/Aneesh/Desktop/Executables and Shit/workspace/C++/Lin Al/include/Vector.h
 
 C:/Users/Aneesh/Desktop/Executables and Shit/workspace/C++/Lin Al/src/Vector.cpp
 ../include/Vector.h

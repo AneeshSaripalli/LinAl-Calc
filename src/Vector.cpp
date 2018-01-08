@@ -2,7 +2,7 @@
 
 using namespace std;
 
-Vector* null_vector = new Vector(0, 0);
+const Vector* Vector::v_null = 0;
 
 Vector::Vector(int length, double* values)
     : Object("vector")

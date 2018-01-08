@@ -7,6 +7,8 @@
 class Matrix : public Object
 {
 public:
+    static const Matrix* m_null ;
+
     int rows, cols;
 
     static double determinant(Matrix* mat);

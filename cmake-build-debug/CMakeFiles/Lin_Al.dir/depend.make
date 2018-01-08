@@ -11,7 +11,9 @@ CMakeFiles/Lin_Al.dir/src/Matrix.cpp.obj: ../include/Object.h
 CMakeFiles/Lin_Al.dir/src/Matrix.cpp.obj: ../include/Vector.h
 CMakeFiles/Lin_Al.dir/src/Matrix.cpp.obj: ../src/Matrix.cpp
 
+CMakeFiles/Lin_Al.dir/src/Object.cpp.obj: ../include/Matrix.h
 CMakeFiles/Lin_Al.dir/src/Object.cpp.obj: ../include/Object.h
+CMakeFiles/Lin_Al.dir/src/Object.cpp.obj: ../include/Vector.h
 CMakeFiles/Lin_Al.dir/src/Object.cpp.obj: ../src/Object.cpp
 
 CMakeFiles/Lin_Al.dir/src/Vector.cpp.obj: ../include/Object.h

@@ -6,6 +6,8 @@
 class Vector : public Object
 {
 public:
+    static const Vector* v_null;
+
     int length;
     Vector(int cols, double* values);
     Vector(int cols);

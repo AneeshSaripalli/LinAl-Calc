@@ -2,6 +2,8 @@
 
 using namespace std;
 
+const Matrix* Matrix::m_null = 0;
+
 Matrix::Matrix(int rows, int cols)
     : Object("matrix")
 {
