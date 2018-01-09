@@ -238,7 +238,7 @@ Action process(string &cmd, bool del) {
 
         store_In_Object_Map(alias, newObj);
 
-        return Action(string("define"), newObj);
+        return Action(string("define"), newObj, false);
 
     } else if (command == "recall" || command == "print") {
         string alias;
@@ -247,7 +247,7 @@ Action process(string &cmd, bool del) {
         string type = savedType(alias);
 
         if (type != "null") {
-            obj_map[alias]->print();
+            return Action(string("print"), obj_map[alias], false);
         } else {
             cout << "-> Variable \"" << alias << "\" not defined during this session." << endl;
         }
