@@ -20,7 +20,7 @@ Vector::Vector()
     : Object("vector")
 {
     int length;
-    cout << "Enter the length of the vector: ";
+    cout << "-> Enter the length of the vector: ";
     cin >> length;
 
     this->length = length;

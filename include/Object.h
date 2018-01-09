@@ -1,29 +1,29 @@
 #include <iostream>
 #include <iomanip>
 #include <cmath>
+#include <typeinfo>
 
 #ifndef OBJECT_H
 #define OBJECT_H
 
-class Object
-{
-    public:
-        std::string name;
+class Object {
+public:
+    std::string name;
 
-        Object(std::string name);
-        virtual ~Object();
+    Object(std::string name);
 
-        virtual void print() = 0;
+    virtual ~Object();
 
-        template <class Type>
-        Type* get(Type t)
-        {
-            return (Type*) (this);
-        }
+    virtual void print() = 0;
 
-    protected:
+    template<class Type>
+    Type *get(Type const *t) {
+        return (Type *) (this);
+    }
 
-    private:
+protected:
+
+private:
 };
 
 #endif // OBJECT_H

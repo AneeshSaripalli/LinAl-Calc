@@ -30,8 +30,21 @@ struct Action { // Simple class to store an obj_ptr and name of the action
     }
 
     ~Action() {
-        if (del)
-            delete obj_ptr;
+        if (del) {
+            if (obj_ptr != 0) {
+                if (obj_ptr->name == "matrix") {
+                    Matrix *m_ptr = (Matrix *) obj_ptr;
+
+                    delete m_ptr;
+
+                } else if (obj_ptr->name == "vector") {
+                    Vector *v_ptr = (Vector *) obj_ptr;
+
+                    delete v_ptr;
+                }
+
+            }
+        }
     }
 };
 
@@ -43,7 +56,7 @@ string savedType(string &s); // Returns the saved type <matrix/vector> of an obj
 
 bool contains(string findIn, string toFind); // Returns whether or not a substring exists within a string
 
-Action process(string &cmd); // Conglomerate of all string parsing
+Action process(string &cmd, bool del = false); // Conglomerate of all string parsing
 
 void store_In_Object_Map(string key, Object *obj_ptr); // Stores a key: string, value:obj_ptr pair in the obj_map map
 
@@ -77,7 +90,7 @@ Vector *solveLeastSquares(Matrix &a, Vector &b) {
         sigma += pow((*error)[i], 2) / b[i];
     }
 
-    cout << "Sum of residuals: " << sigma << endl;
+    cout << "-> Sum of residuals: " << sigma << endl;
     /*
     * Clears up all pointers
     */
@@ -85,19 +98,21 @@ Vector *solveLeastSquares(Matrix &a, Vector &b) {
     delete a_trans;
     delete at_a;
     delete at_b;
-    delete sol;
+    delete error;
     delete a_x;
 
-    return error;
+    return sol;
 }
 
 
 void help() { // Console output to help direct users
-    cout << "Functional Commands: " << endl;
+    cout << "Functional Commands: Any data can be given with the name of the object or inputted after command call." << endl;
+    cout << "\tEx: define matrix a ... \nrank a is equivalent to rank ... followed by input." << endl;
     cout << "-- define || def --> Alias either a matrix or a vector with a name to use later on." << endl;
+    cout << "-- assign --> Alias the result of some command with a name.\n\t Ex: \"assign b inverse a\" assigns b the matrix value of a inverse." << endl;
     cout << "-- approx_sol || as --> Least squares solution to Ax = B." << endl;
     cout << "-- least_squares || ls --> Accepts data for least squares regression." << endl;
-    cout << "-- rank --> Returns rank of a matrix" << endl;
+    cout << "-- rank --> Returns rank of a matrix." << endl;
     cout << "-- inverse || inv --> Returns the inverse of the matrix if it exists." << endl;
     cout << "-- dot --> Returns dot product of two vectors." << endl;
     cout << "-- determinant || det --> Returns the determinant of the matrix." << endl;
@@ -110,21 +125,16 @@ void help() { // Console output to help direct users
 void store_In_Object_Map(string key, Object *obj_ptr) {
     if (keyInMap(obj_map, key)) {
 
-        cout << "Already in map. First deleting old value then adding new one." << endl;
+        Object *obj_ptr_old = obj_map[key];
 
-        Object *obj_ptr = obj_map[key];
-
-        if (obj_ptr->name == "matrix") { delete (Matrix *) obj_ptr; }
-        else if (obj_ptr->name == "vector") { delete (Vector *) obj_ptr; }
+        if (obj_ptr->name == "matrix") { delete (Matrix *) obj_ptr_old; }
+        else if (obj_ptr->name == "vector") { delete (Vector *) obj_ptr_old; }
 
         obj_map[key] = obj_ptr;
 
     } else {
-        cout << "Adding new value" << endl;
         obj_map.insert(std::make_pair(key, obj_ptr));
     }
-
-    cout << "Saved latest object with name " << key << endl;
 }
 
 string savedType(string &s) {
@@ -182,8 +192,23 @@ bool keyInMap(map<Key, Value> &m, Key key) {
         return true;
 }
 
+Matrix *matrix_Operations(Matrix *m1, Matrix *m2, string oper) {
+    if (oper == "*") { return *m1 * *m2; }
+    else if (oper == "+") { return *m1 + *m2; }
+    else if (oper == "-") { return *m1 - *m2; }
+    else {
+        cout << "Returning 0 as matrix pointer" << endl;
+        return 0;
+    }
+}
 
-Action process(string &cmd) {
+Vector *matrix_vector_Operations(Matrix *m1, Vector *v1, string oper) {
+    if (oper == "*") { return (*m1) * (*v1); }
+    else { return 0; }
+}
+
+
+Action process(string &cmd, bool del) {
     std::stringstream ss;
     ss << cmd;
 
@@ -196,7 +221,7 @@ Action process(string &cmd) {
         ss >> type >> alias;
 
         if (alias == "" || type == "") {
-            cout << "Data can not be empty strings. Type \"help\" for help." << endl;
+            cout << "-> Data can not be empty strings. Type \"help\" for help." << endl;
             return Action(string("define"), 0);
         }
 
@@ -207,7 +232,7 @@ Action process(string &cmd) {
         } else if (type == "vector") {
             newObj = new Vector();
         } else {
-            cout << "Data format not recognized.\n define <matrix/vector> <name>" << endl;
+            cout << "-> Data format not recognized.\n define <matrix/vector> <name>" << endl;
             return Action(string("define"), 0);
         }
 
@@ -224,7 +249,7 @@ Action process(string &cmd) {
         if (type != "null") {
             obj_map[alias]->print();
         } else {
-            cout << "Variable \"" << alias << "\" not defined during this session." << endl;
+            cout << "-> Variable \"" << alias << "\" not defined during this session." << endl;
         }
 
         return Action("recall", 0);
@@ -232,25 +257,19 @@ Action process(string &cmd) {
         string alias;
         ss >> alias;
 
-        cout << "Alias is " << alias << endl;
-
-
-        int start_pos = cmd.find(alias);
+        int start_pos = cmd.find(alias, 6);
         int end_pos = start_pos + alias.length();
-
-        cout << "Getting substr from " << end_pos << ", total length is " << cmd.length() << endl;
 
         string rest = cmd.substr(end_pos);
         trim(rest);
 
-        cout << "Result of command is: " << rest << endl;
 
-        Action result = process(rest);
+        Action result = process(rest, false);
 
         Object *data_ptr = result.obj_ptr;
 
         if (data_ptr == 0) {
-            cout << "Not possible to assign a data to this." << endl;
+            cout << "-> Assignment function does not have a return type." << endl;
         } else {
             store_In_Object_Map(alias, data_ptr);
         }
@@ -270,15 +289,52 @@ Action process(string &cmd) {
             } else if (obj_ptr->name == "vector") {
                 delete (Vector *) obj_ptr;
             } else {
-                cout << "Object with the name " << alias << " has not been initialized in this run time." << endl;
+                cout << "-> Object with the name " << alias << " has not been initialized in this run time." << endl;
                 return Action("delete", 0);
             }
 
             obj_map.erase(alias);
 
-            cout << "Remove object with name " << alias << endl;
-
             return Action("delete", 0);
+        }
+
+    } else if (command == "calculate" || command == "calc") {
+        string first, oper, second;
+        ss >> first;
+        ss >> oper;
+        ss >> second;
+
+        if (keyInMap(obj_map, first) || keyInMap(obj_map, second)) {
+
+            Object *obj_ptr1 = obj_map[first];
+            Object *obj_ptr2 = obj_map[second];
+
+            Object *returnObj = 0;
+
+            if (obj_ptr1->name == "matrix" && obj_ptr2->name == "matrix") {
+                returnObj = matrix_Operations((Matrix *) obj_ptr1, (Matrix *) obj_ptr2, oper);
+
+                if(returnObj == 0)
+                {
+                    cout << oper << " is not an acceptable operation between two matrices." << endl;
+                    return Action("calc mmult", 0);
+                }
+
+                returnObj->name = "matrix";
+
+                return Action("calc mmult", returnObj, del);
+
+            } else if (obj_ptr1->name == "matrix" && obj_ptr2->name == "vector") {
+                returnObj = matrix_vector_Operations(obj_ptr1->get(Matrix::m_null), obj_ptr2->get(Vector::v_null), oper);
+                returnObj->name = "vector";
+
+                return Action("calc mvmult", returnObj, del);
+
+            } else if (obj_ptr1->name == "vector" && obj_ptr2->name == "vector") {
+                string processString = "dot " + first + " " + second;
+                process(processString, true);
+                return Action("calc dot", 0);
+            }
         }
 
     } else if (command == "approx_sol" || command == "as") {
@@ -296,7 +352,7 @@ Action process(string &cmd) {
 
         } else {
             if (mat_a != "" || vec_b != "") {
-                cout << "Data input format did not match the appropriate format." << endl;
+                cout << "-> Data input format did not match the appropriate format." << endl;
             }
 
             *m_ptr = Matrix();
@@ -305,24 +361,24 @@ Action process(string &cmd) {
 
         Vector *v_sol = solveLeastSquares(*m_ptr, *v_ptr);
 
-        return Action("approx_sol", v_sol);
+        return Action("approx_sol", v_sol, del);
 
     } else if (command == "least_squares" || command == "ls") {
         int data_points;
-        cout << "Enter the number of data points: ";
+        cout << "-> Enter the number of data points: ";
         cin >> data_points;
 
         if (data_points <= 1) {
-            cout << "Enter at least 2 data points: " << endl;
+            cout << "-> Enter at least 2 data points: " << endl;
             return Action("least_squares", 0);
         }
 
         int power;
-        cout << "Enter the power to evaluate the plot at: ";
+        cout << "-> Enter the power to evaluate the data set at: ";
         cin >> power;
 
         if (power > 10) {
-            cout << "Power is too great." << endl;
+            cout << "-> Power is too great." << endl;
             return Action("least_squares", 0);
         }
 
@@ -332,7 +388,7 @@ Action process(string &cmd) {
 
         for (int row = 0; row < data_points; row++) {
             int x, y;
-            cout << "Enter x and y: ";
+            cout << "-> Enter x, y: ";
             cin >> x >> y;
 
             for (int col = power; col >= 0; col--) {
@@ -344,7 +400,7 @@ Action process(string &cmd) {
 
         Vector *result = solveLeastSquares(*data_mat, *y_vals);
 
-        return Action("least_squares", result);
+        return Action("least_squares", result, del);
     } else if (command == "rank") {
         string alias;
         ss >> alias;
@@ -354,19 +410,19 @@ Action process(string &cmd) {
 
             Matrix *reduced = m_ptr->gaussianReducedForm();
 
-            cout << "The rank of the matrix is " << reduced->countPivots() << "." << endl;
+            cout << "-> The rank of the matrix is " << reduced->countPivots() << "." << endl;
 
             delete reduced;
         } else {
             if (alias != "") {
-                cout << "A matrix with the name of " << alias << " was not found." << endl;
+                cout << "-> A matrix with the name of " << alias << " was not found." << endl;
             }
 
             Matrix m = Matrix();
 
             m.gaussianReduce();
 
-            cout << "The rank of the matrix is " << m.countPivots() << "." << endl;
+            cout << "-> The rank of the matrix is " << m.countPivots() << "." << endl;
         }
 
         return Action("rank", 0);
@@ -392,7 +448,7 @@ Action process(string &cmd) {
         Matrix *inverse = m->inverse();
 
         if (inverse != 0) {
-            return Action("inverse", inverse);
+            return Action("inverse", inverse, del);
         }
 
         return Action("inverse", 0);
@@ -416,7 +472,7 @@ Action process(string &cmd) {
 
         dot = (*v1_ptr) * (*v2_ptr);
 
-        cout << "The dot product of the two vectors is " << setprecision(5) << dot << endl;
+        cout << "-> The dot product of the two vectors is " << setprecision(5) << dot << endl;
 
         return Action("dot", 0);
 
@@ -432,7 +488,7 @@ Action process(string &cmd) {
             *m = Matrix();
         }
 
-        cout << "The determinant of " << alias << " is " << Matrix::determinant(m) << endl;
+        cout << "-> The determinant of " << alias << " is " << Matrix::determinant(m) << endl;
 
         return Action("determinant", 0);
 
@@ -464,7 +520,7 @@ Action process(string &cmd) {
             }
         }
 
-        cout << "Basis Vectors for the Row Space [Read Horizontal]: " << endl;
+        cout << "-> Basis Vectors for the Row Space [Read Horizontal]: " << endl;
 
         for (int i = 0; i < min_dim; i++) {
             if (basisV[i]) {
@@ -472,7 +528,7 @@ Action process(string &cmd) {
             }
         }
 
-        cout << "Basis Vectors for the Column Space [Read Vertical]: " << endl;
+        cout << "-> Basis Vectors for the Column Space [Read Vertical]: " << endl;
 
         for (int i = 0; i < min_dim; i++) {
             if (basisV[i]) {
@@ -480,8 +536,8 @@ Action process(string &cmd) {
             }
         }
 
-        delete [] reduced;
-        delete [] basisV;
+        delete[] reduced;
+        delete[] basisV;
 
         return Action("basis", 0);
 
@@ -491,7 +547,7 @@ Action process(string &cmd) {
     } else if (command == "exit" || command == "quit") {
         return Action("exit", 0);
     } else {
-        cout << "Command " << cmd << " not recognized. Type \"help\" for help." << endl;
+        cout << "-> Command " << cmd << " not recognized. Type \"help\" for help." << endl;
         return Action("undef", 0);
     }
 }
