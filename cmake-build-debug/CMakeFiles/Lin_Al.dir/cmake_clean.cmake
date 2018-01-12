@@ -3,6 +3,7 @@ file(REMOVE_RECURSE
   "CMakeFiles/Lin_Al.dir/src/Object.cpp.obj"
   "CMakeFiles/Lin_Al.dir/src/Vector.cpp.obj"
   "CMakeFiles/Lin_Al.dir/main.cpp.obj"
+  "CMakeFiles/Lin_Al.dir/src/Value.cpp.obj"
   "Lin_Al.pdb"
   "Lin_Al.exe"
   "Lin_Al.exe.manifest"

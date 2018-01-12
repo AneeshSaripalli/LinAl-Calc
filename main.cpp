@@ -5,7 +5,7 @@
 
 #include "include/Object.h"
 #include "include/Matrix.h"
-
+#include "src/Value.cpp"
 
 using namespace std;
 
@@ -41,8 +41,9 @@ struct Action { // Simple class to store an obj_ptr and name of the action
                     Vector *v_ptr = (Vector *) obj_ptr;
 
                     delete v_ptr;
-                }
+                } else if (obj_ptr->name == "value") {
 
+                }
             }
         }
     }
@@ -207,6 +208,12 @@ Vector *matrix_vector_Operations(Matrix *m1, Vector *v1, string oper) {
     else { return 0; }
 }
 
+Vector *vector_Operations(Vector *v1, Vector *v2, string oper) {
+    if (oper == "+") { return (*v1) + (*v2); }
+    else if (oper == "-") { return (*v1) - (*v2); }
+    else { return 0; }
+}
+
 
 Action process(string &cmd, bool del) {
     std::stringstream ss;
@@ -277,7 +284,17 @@ Action process(string &cmd, bool del) {
 
         return Action("assign", 0);
 
+    } else if (command == "mem" || command == "memory") {
+        for (auto it = obj_map.begin(); it != obj_map.end(); it++) {
+            cout << "-------------------------" << endl;
+            cout << "Object " << it->first << endl;
+            it->second->print();
+            cout << "-------------------------" << endl;
+        }
+
+        return Action("memory", 0);
     } else if (command == "delete" || command == "del") {
+
         string alias;
         ss >> alias;
 
@@ -314,8 +331,7 @@ Action process(string &cmd, bool del) {
             if (obj_ptr1->name == "matrix" && obj_ptr2->name == "matrix") {
                 returnObj = matrix_Operations((Matrix *) obj_ptr1, (Matrix *) obj_ptr2, oper);
 
-                if(returnObj == 0)
-                {
+                if (returnObj == 0) {
                     cout << oper << " is not an acceptable operation between two matrices." << endl;
                     return Action("calc mmult", 0);
                 }
@@ -331,9 +347,17 @@ Action process(string &cmd, bool del) {
                 return Action("calc mvmult", returnObj, del);
 
             } else if (obj_ptr1->name == "vector" && obj_ptr2->name == "vector") {
-                string processString = "dot " + first + " " + second;
-                process(processString, true);
-                return Action("calc dot", 0);
+                if (oper == "*") {
+                    string processString = "dot " + first + " " + second;
+                    process(processString, true);
+
+                    return Action("calc dot", 0);
+                } else {
+                    returnObj = vector_Operations(obj_ptr1->get(Vector::v_null), obj_ptr2->get(Vector::v_null), oper);
+                    returnObj->name = "vector";
+
+                    return Action("calc voper", returnObj, del);
+                }
             }
         }
 
@@ -472,9 +496,11 @@ Action process(string &cmd, bool del) {
 
         dot = (*v1_ptr) * (*v2_ptr);
 
-        cout << "-> The dot product of the two vectors is " << setprecision(5) << dot << endl;
+        Value<double> *value_ptr = new Value<double>(dot);
 
-        return Action("dot", 0);
+        // value_ptr->print();
+
+        return Action("dot", value_ptr, del);
 
     } else if (command == "det" || command == "determinant") {
         string alias;
@@ -488,9 +514,11 @@ Action process(string &cmd, bool del) {
             *m = Matrix();
         }
 
-        cout << "-> The determinant of " << alias << " is " << Matrix::determinant(m) << endl;
+        double det = Matrix::determinant(m);
 
-        return Action("determinant", 0);
+        Value<double> *det_ptr = new Value<double>(det);
+
+        return Action("determinant", det_ptr, del);
 
     } else if (command == "basis") {
         string alias;

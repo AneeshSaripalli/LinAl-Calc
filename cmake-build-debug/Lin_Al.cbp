@@ -100,6 +100,9 @@
 		<Unit filename="C:/Users/Aneesh/Desktop/Executables and Shit/workspace/C++/Lin Al/src/Object.cpp">
 			<Option target="Lin_Al"/>
 		</Unit>
+		<Unit filename="C:/Users/Aneesh/Desktop/Executables and Shit/workspace/C++/Lin Al/src/Value.cpp">
+			<Option target="Lin_Al"/>
+		</Unit>
 		<Unit filename="C:/Users/Aneesh/Desktop/Executables and Shit/workspace/C++/Lin Al/src/Vector.cpp">
 			<Option target="Lin_Al"/>
 		</Unit>

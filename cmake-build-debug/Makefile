@@ -203,6 +203,33 @@ src/Object.cpp.s:
 	$(MAKE) -f CMakeFiles\Lin_Al.dir\build.make CMakeFiles/Lin_Al.dir/src/Object.cpp.s
 .PHONY : src/Object.cpp.s
 
+src/Value.obj: src/Value.cpp.obj
+
+.PHONY : src/Value.obj
+
+# target to build an object file
+src/Value.cpp.obj:
+	$(MAKE) -f CMakeFiles\Lin_Al.dir\build.make CMakeFiles/Lin_Al.dir/src/Value.cpp.obj
+.PHONY : src/Value.cpp.obj
+
+src/Value.i: src/Value.cpp.i
+
+.PHONY : src/Value.i
+
+# target to preprocess a source file
+src/Value.cpp.i:
+	$(MAKE) -f CMakeFiles\Lin_Al.dir\build.make CMakeFiles/Lin_Al.dir/src/Value.cpp.i
+.PHONY : src/Value.cpp.i
+
+src/Value.s: src/Value.cpp.s
+
+.PHONY : src/Value.s
+
+# target to generate assembly for a file
+src/Value.cpp.s:
+	$(MAKE) -f CMakeFiles\Lin_Al.dir\build.make CMakeFiles/Lin_Al.dir/src/Value.cpp.s
+.PHONY : src/Value.cpp.s
+
 src/Vector.obj: src/Vector.cpp.obj
 
 .PHONY : src/Vector.obj
@@ -248,6 +275,9 @@ help:
 	@echo ... src/Object.obj
 	@echo ... src/Object.i
 	@echo ... src/Object.s
+	@echo ... src/Value.obj
+	@echo ... src/Value.i
+	@echo ... src/Value.s
 	@echo ... src/Vector.obj
 	@echo ... src/Vector.i
 	@echo ... src/Vector.s

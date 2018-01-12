@@ -10,6 +10,6 @@ set(SOURCE_FILES
         src/Matrix.cpp
         src/Object.cpp
         src/Vector.cpp
-        main.cpp)
+        main.cpp src/Value.cpp)
 
 add_executable(Lin_Al ${SOURCE_FILES})
