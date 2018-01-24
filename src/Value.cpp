@@ -11,16 +11,27 @@ public:
     T value;
 
     Value(T value) : Object("value") {
-       // std::cout << "New value created with value " << value << std::endl;
+        // std::cout << "New value created with value " << value << std::endl;
         this->value = value;
     }
+
+    Value() : Object("value") {
+        std::cout << "Enter value:\n " << ">> ";
+        std::cin >> value;
+
+        char c = std::cin.get();
+        if(c == '\n')
+        {
+            std::cout << std::endl;
+        }
+    }
+
 
     void print() {
         std::cout << value << std::endl;
     }
 
-    virtual ~Value()
-    {
-        std::cout << "Value being deconstructed" << std::endl;
+    virtual ~Value() {
+
     }
 };

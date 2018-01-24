@@ -5,7 +5,6 @@ set(CMAKE_CXX_STANDARD 11)
 
 set(SOURCE_FILES
         include/Matrix.h
-        include/Object.h
         include/Vector.h
         src/Matrix.cpp
         src/Object.cpp

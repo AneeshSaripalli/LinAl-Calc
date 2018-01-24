@@ -11,27 +11,24 @@ using namespace std;
 
 
 struct Action { // Simple class to store an obj_ptr and name of the action
-    string name;
-    Object *obj_ptr;
+    string name; // Serves to identify where the Action object came from
+    Object *obj_ptr; // Either is a true obj_ptr or 0, depending on whether the command needs to return something
 
-    bool del;
+    bool del; // bool to designate whether to delete the obj_ptr on destruction
 
-    Action(string name, Object *obj_ptr) {
-        this->name = name;
-        this->obj_ptr = obj_ptr;
-
-        del = false;
-    }
-
-    Action(string name, Object *object, bool del) {
+    Action(string name, Object *object, bool del = false) {
         this->name = name;
         this->obj_ptr = object;
         this->del = del;
     }
 
     ~Action() {
-        if (del) {
+        if (del) { // Checks if the ptr should be deleted
             if (obj_ptr != 0) {
+                /*
+                 * Checks all possible name types and casts to the appropriate one before releasing the memory
+                 */
+
                 if (obj_ptr->name == "matrix") {
                     Matrix *m_ptr = (Matrix *) obj_ptr;
 
@@ -42,8 +39,11 @@ struct Action { // Simple class to store an obj_ptr and name of the action
 
                     delete v_ptr;
                 } else if (obj_ptr->name == "value") {
+                    Value<double> *value_ptr = (Value<double> *) obj_ptr; // Casts pointer to Value<double> because that is the only used one
 
+                    delete value_ptr;
                 }
+
             }
         }
     }
@@ -115,6 +115,7 @@ void help() { // Console output to help direct users
     cout << "-- least_squares || ls --> Accepts data for least squares regression." << endl;
     cout << "-- rank --> Returns rank of a matrix." << endl;
     cout << "-- inverse || inv --> Returns the inverse of the matrix if it exists." << endl;
+    cout << "-- projection || proj --> Projects the first input vector onto the second and returns the vector projection.\n\t Ex: \"proj a b\" would return the vector projection of a onto b." << endl;
     cout << "-- dot --> Returns dot product of two vectors." << endl;
     cout << "-- determinant || det --> Returns the determinant of the matrix." << endl;
     cout << "-- basis --> Returns the linearly independent basis of both the column and row spaces." << endl;
@@ -238,6 +239,8 @@ Action process(string &cmd, bool del) {
             newObj = new Matrix();
         } else if (type == "vector") {
             newObj = new Vector();
+        } else if (type == "value") {
+            newObj = new Value<double>();
         } else {
             cout << "-> Data format not recognized.\n define <matrix/vector> <name>" << endl;
             return Action(string("define"), 0);
@@ -281,7 +284,6 @@ Action process(string &cmd, bool del) {
             store_In_Object_Map(alias, data_ptr);
         }
 
-
         return Action("assign", 0);
 
     } else if (command == "mem" || command == "memory") {
@@ -293,6 +295,49 @@ Action process(string &cmd, bool del) {
         }
 
         return Action("memory", 0);
+    } else if (command == "cross") {
+        string v1_name, v2_name;
+        ss >> v1_name;
+        ss >> v2_name;
+
+        if (keyInMap(obj_map, v1_name) && keyInMap(obj_map, v2_name)) {
+            Object *v1 = obj_map[v1_name];
+            Object *v2 = obj_map[v2_name];
+
+            if (v1->name == "vector" && v2->name == "vector") {
+
+            }
+
+            cout << "Command not currently supported." << endl;
+        }
+
+    } else if (command == "proj" || command == "projection") {
+        string v1_name, v2_name;
+        ss >> v1_name;
+        ss >> v2_name;
+
+        if (keyInMap(obj_map, v1_name) && keyInMap(obj_map, v2_name)) {
+            Object *v1_obj = obj_map[v1_name];
+            Object *v2_obj = obj_map[v2_name];
+
+            if (v1_obj->name == "vector" && v2_obj->name == "vector") {
+                Vector *v1 = (Vector *) v1_obj;
+                Vector *v2 = (Vector *) v2_obj;
+
+                double u_dot_v = *v1 * *v2;
+                double v_dot_v = *v2 * *v2;
+
+                Vector *proj = (*v2) * (u_dot_v / v_dot_v);
+
+                return Action("proj", proj, true);
+
+            } else {
+                cout << "Projection not supported between entered data types." << endl;
+                return Action("proj", 0, false);
+            }
+        }
+
+
     } else if (command == "delete" || command == "del") {
 
         string alias;
@@ -500,7 +545,7 @@ Action process(string &cmd, bool del) {
 
         // value_ptr->print();
 
-        return Action("dot", value_ptr, del);
+        return Action("dot", value_ptr, true);
 
     } else if (command == "det" || command == "determinant") {
         string alias;
