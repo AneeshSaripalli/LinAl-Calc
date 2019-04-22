@@ -7,6 +7,8 @@
 #include "include/Matrix.h"
 #include "src/Value.cpp"
 
+#define min(x,y) (x < y ? x : y);
+
 using namespace std;
 
 

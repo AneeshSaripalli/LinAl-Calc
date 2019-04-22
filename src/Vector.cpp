@@ -33,7 +33,7 @@ Vector::Vector()
 
     for(int i = 0; i < length; i++)
     {
-        int val;
+        double val;
         cin >> val;
 
         values[i] = val;

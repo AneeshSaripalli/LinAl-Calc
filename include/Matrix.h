@@ -27,6 +27,8 @@ public:
 
     Vector* solveUpperTriangular();
 
+	Matrix* Matrix::identity (int size);
+
     int valueAt(int row, int col);
     int countPivots();
 
