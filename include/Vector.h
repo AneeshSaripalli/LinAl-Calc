@@ -24,7 +24,7 @@ public:
     double evaluateAsPolynomial(double x);
     bool isZeroVector();
     Vector* unit_vector();
-    Vector* cross_product(Vector& );
+    Vector* cross_product(Vector&vec );
 
     Vector* operator+(Vector& other);
     Vector* operator-(Vector& other);

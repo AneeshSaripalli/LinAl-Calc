@@ -4,268 +4,266 @@ using namespace std;
 
 const Vector* Vector::v_null = 0;
 
-Vector::Vector(int length, double* values)
-    : Object("vector")
+Vector::Vector (int length, double* values)
+	: Object (T_VECTOR)
 {
-    this->length = length;
-    this->values = new double[length];
+	this->length = length;
+	this->values = new double[length];
 
-    for(int i = 0; i < length; i++)
-    {
-        this->values[i] = values[i];
-    }
+	for (int i = 0; i < length; i++)
+	{
+		this->values[i] = values[i];
+	}
 }
 
-Vector::Vector()
-    : Object("vector")
+Vector::Vector ()
+	: Object (T_VECTOR)
 {
-    int length;
-    cout << "-> Enter the length of the vector: ";
-    cin >> length;
+	int length;
+	cout << "-> Enter the length of the vector: ";
+	cin >> length;
 
-    this->length = length;
+	this->length = length;
 
-    values = new double[length];
+	values = new double[length];
 
-    cout << ">> ";
+	cout << ">> ";
 
-    int total = 0;
+	int total = 0;
 
-    for(int i = 0; i < length; i++)
-    {
-        double val;
-        cin >> val;
+	for (int i = 0; i < length; i++)
+	{
+		double val;
+		cin >> val;
 
-        values[i] = val;
+		values[i] = val;
 
-        total++;
+		total++;
 
-        char a;
-        a = cin.get();
+		char a;
+		a = cin.get ();
 
 
-        if(total != length && a == '\n')
-        {
-            cout << ">> ";
-        }
-    }
+		if (total != length && a == '\n')
+		{
+			cout << ">> ";
+		}
+	}
 }
 
-double Vector::evaluateAsPolynomial(double x)
+double Vector::evaluateAsPolynomial (double x)
 {
-    double result = 0;
+	double result = 0;
 
-    for(int i = 0; i < length; i++)
-    {
-        int power = length - i - 1;
+	for (int i = 0; i < length; i++)
+	{
+		int power = length - i - 1;
 
-        double contribution = values[i] * pow(x, power);
+		double contribution = values[i] * pow (x, power);
 
-        result += contribution;
-    }
+		result += contribution;
+	}
 
-    return result;
+	return result;
 }
 
-void Vector::add(double x)
+void Vector::add (double x)
 {
-    double* newList = new double[length + 1];
+	double* newList = new double[length + 1];
 
-    for(int i = 0; i < length; i++)
-    {
-        newList[i] = values[i];
-    }
+	for (int i = 0; i < length; i++)
+	{
+		newList[i] = values[i];
+	}
 
-    newList[length] = x;
+	newList[length] = x;
 
-    length += 1;
+	length += 1;
 
-    delete [] values;
+	delete[] values;
 
-    values = newList;
+	values = newList;
 }
 
-Vector* Vector::cross_product(Vector& other)
+Vector* Vector::cross_product (Vector& other)
 {
-    if(!(length == 3 && other.length == 3))
-    {
-        cout << "Cross product only defined between vectors with length 3." << endl;
-        return 0;
-    }
-
-    
+	if (!(length == 3 && other.length == 3))
+	{
+		cout << "Cross product only defined between vectors with length 3." << endl;
+		return 0;
+	}
 
 }
 
-void Vector::append(Vector& a)
+void Vector::append (Vector& a)
 {
-    for(int i = 0; i < a.length; i++)
-    {
-        add(a[i]);
-    }
+	for (int i = 0; i < a.length; i++)
+	{
+		add (a[i]);
+	}
 }
 
-bool Vector::isZeroVector()
+bool Vector::isZeroVector ()
 {
-    for(int i = 0; i < length; i++)
-    {
-        if(values[i] != 0)
-            return false;
-    }
+	for (int i = 0; i < length; i++)
+	{
+		if (values[i] != 0)
+			return false;
+	}
 
-    return true;
+	return true;
 }
 
-void Vector::scale(double scalar)
+void Vector::scale (double scalar)
 {
-    for(int i = 0; i < length; i++)
-    {
-        values[i] *= scalar;
-    }
+	for (int i = 0; i < length; i++)
+	{
+		values[i] *= scalar;
+	}
 }
 
-Vector::Vector(int length)
-    : Object("vector")
+Vector::Vector (int length)
+	: Object (T_VECTOR)
 {
-    this->length = length;
-    values = new double[length];
+	this->length = length;
+	values = new double[length];
 
-    if(values == NULL)
-    {
-        cout << "Memory not allocated for values" << endl;
-    }
+	if (values == NULL)
+	{
+		cout << "Memory not allocated for values" << endl;
+	}
 }
 
 double& Vector::operator[](int index)
 {
-    return values[index];
+	return values[index];
 }
 
-void Vector::subtractVector(Vector &v)
+void Vector::subtractVector (Vector &v)
 {
-    if(length != v.length)
-    {
-        cout << "These two vectors can not be subtracted." << endl;
-        return;
-    }
+	if (length != v.length)
+	{
+		cout << "These two vectors can not be subtracted." << endl;
+		return;
+	}
 
-    for(int i = 0; i < length; i++)
-    {
-        (*this)[i] -= v[i];
-    }
+	for (int i = 0; i < length; i++)
+	{
+		(*this)[i] -= v[i];
+	}
 }
 
 Vector* Vector::operator+(Vector& other)
 {
-    if(length != other.length)
-    {
-        cout << "These two vectors can not be added." << endl;
-        return 0;
-    }
+	if (length != other.length)
+	{
+		cout << "These two vectors can not be added." << endl;
+		return 0;
+	}
 
-    Vector* sum = new Vector(length);
+	Vector* sum = new Vector (length);
 
-    for(int i = 0; i < length; i++)
-    {
-        (*sum)[i] = other[i] + (*this)[i];
-    }
+	for (int i = 0; i < length; i++)
+	{
+		(*sum)[i] = other[i] + (*this)[i];
+	}
 
-    return sum;
+	return sum;
 }
 
 Vector* Vector::operator-(Vector& other)
 {
-    if(length != other.length)
-    {
-        cout << "These two vectors can not be subtracted." << endl;
-        return 0;
-    }
+	if (length != other.length)
+	{
+		cout << "These two vectors can not be subtracted." << endl;
+		return 0;
+	}
 
-    Vector* diff = new Vector(length);
+	Vector* diff = new Vector (length);
 
-    for(int i = 0; i < length; i++)
-    {
-        (*diff)[i] = (*this)[i] - other[i];
-    }
+	for (int i = 0; i < length; i++)
+	{
+		(*diff)[i] = (*this)[i] - other[i];
+	}
 
-    return diff;
+	return diff;
 }
 
 Vector* Vector::operator / (double scalar)
 {
-    return (*this) * (1.0 / scalar);
+	return (*this) * (1.0 / scalar);
 }
 
 double Vector::operator*(Vector& other)
 {
-    if(length != other.length)
-    {
-        cout << "These two vectors can not be dotted." << endl;
-        return -1;
-    }
+	if (length != other.length)
+	{
+		cout << "These two vectors can not be dotted." << endl;
+		return -1;
+	}
 
-    double sum = 0;
+	double sum = 0;
 
-    for(int i = 0; i < length; i++)
-    {
-        sum += (*this)[i] * other[i];
-    }
+	for (int i = 0; i < length; i++)
+	{
+		sum += (*this)[i] * other[i];
+	}
 
-    return sum;
+	return sum;
 }
 
-void Vector::round_off()
+void Vector::round_off ()
 {
-    for(int i = 0; i < length; i++)
-    {
-        double value = (*this)[i];
+	for (int i = 0; i < length; i++)
+	{
+		double value = (*this)[i];
 
-        value = abs(value);
+		value = abs (value);
 
-        if(value < 1e-9)
-        {
-            (*this)[i] = 0;
-        }
-    }
+		if (value < 1e-9)
+		{
+			(*this)[i] = 0;
+		}
+	}
 }
 
-Vector* Vector::unit_vector()
+Vector* Vector::unit_vector ()
 {
-    double mag = 0;
+	double mag = 0;
 
-    for(int i = 0; i < length; i++)
-    {
-        mag += values[i] * values[i];
-    }
+	for (int i = 0; i < length; i++)
+	{
+		mag += values[i] * values[i];
+	}
 
-    Vector* scaled_down = (*this) / mag;
+	Vector* scaled_down = (*this) / mag;
 
-    return scaled_down;
+	return scaled_down;
 }
 
 Vector* Vector::operator*(double scalar)
 {
-    Vector* scale = new Vector(length);
+	Vector* scale = new Vector (length);
 
-    for(int i = 0; i < length; i++)
-    {
-        (*scale)[i] = scalar * (*this)[i];
-    }
+	for (int i = 0; i < length; i++)
+	{
+		(*scale)[i] = scalar * (*this)[i];
+	}
 
-    return scale;
+	return scale;
 }
 
-void Vector::print()
+void Vector::print ()
 {
-    cout << "[ ";
-    for(int i = 0; i < length; i++)
-    {
-        cout << setw(10) << setprecision(5) << values[i] << " ";
-    }
-    cout << " ]" << endl;
+	cout << "[ ";
+	for (int i = 0; i < length; i++)
+	{
+		cout << setw (10) << setprecision (5) << values[i] << " ";
+	}
+	cout << " ]" << endl;
 }
 
-Vector::~Vector()
+Vector::~Vector ()
 {
-    delete [] values;
+	delete[] values;
 }

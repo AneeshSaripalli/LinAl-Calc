@@ -7,7 +7,7 @@ Matrix const *Matrix::m_null = 0;
 #define min(x,y) (x < y ? x : y);
 
 Matrix::Matrix (int rows, int cols)
-	: Object ("matrix") {
+	: Object (T_MATRIX) {
 	this->rows = rows;
 	this->cols = cols;
 
@@ -21,7 +21,7 @@ Matrix::Matrix (int rows, int cols)
 }
 
 Matrix::Matrix ()
-	: Object ("matrix") {
+	: Object (T_MATRIX) {
 	int rows, cols;
 
 	cout << "-> Enter a row length: ";
