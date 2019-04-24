@@ -22,6 +22,10 @@ int Runtime::savedType (const std::string &s) {
 }
 
 
+Runtime::Runtime () {
+	parser = std::make_unique<Parser> ();
+}
+
 Runtime::~Runtime ()
 {
 	for (auto it = obj_map.begin (); it != obj_map.end (); it++) {

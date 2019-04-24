@@ -9,26 +9,34 @@ Action::Action (std::string name, Object *object, bool del) {
 }
 
 Action::~Action () {
-	if (del) { // Checks if the ptr should be deleted
-		if (obj_ptr != 0) {
-			/*
-			 * Checks all possible name types and casts to the appropriate one before releasing the memory
-			 */
+	if (!del) return;
 
-			if (obj_ptr->type == T_MATRIX) {
-				Matrix *m_ptr = (Matrix *)obj_ptr;
-				delete m_ptr;
+	// Checks if the ptr should be deleted
+	if (obj_ptr != 0) {
+		/*
+		 * Checks all possible name types and casts to the appropriate one before releasing the memory
+		 */
 
-			}
-			else if (obj_ptr->type == T_VECTOR) {
-				Vector *v_ptr = (Vector *)obj_ptr;
-				delete v_ptr;
-			}
-			else if (obj_ptr->type == T_VALUE) {
-				Value<double> *value_ptr = (Value<double> *) obj_ptr; // Casts pointer to Value<double> because that is the only used one
-				delete value_ptr;
-			}
-
+		switch (obj_ptr->type)
+		{
+		case T_MATRIX:
+		{
+			Matrix *m_ptr = (Matrix *)obj_ptr;
+			delete m_ptr;
+			break;
+		}
+		case T_VECTOR:
+		{
+			Vector *v_ptr = (Vector *)obj_ptr;
+			delete v_ptr;
+			break;
+		}
+		case T_VALUE:
+		{
+			Value<double> *value_ptr = (Value<double> *) obj_ptr; // Casts pointer to Value<double> because that is the only used one
+			delete value_ptr;
+			break;
+		}
 		}
 	}
 }
