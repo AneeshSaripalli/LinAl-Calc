@@ -19,5 +19,7 @@ public:
 
 	void store_In_Object_Map (std::string key, Object *obj_ptr); // Stores a key: string, value:obj_ptr pair in the obj_map map
 
+	virtual ~Runtime ();
+
 	std::map < std::string, Object * > obj_map;
 };
