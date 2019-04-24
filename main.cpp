@@ -214,7 +214,7 @@ Action process (std::string &cmd, Runtime& rnt, bool del = false) {
 			Object *v1 = rnt.obj_map[v1_name];
 			Object *v2 = rnt.obj_map[v2_name];
 
-			if (v1->name == T_VECTOR && v2->name == T_VECTOR) {
+			if (v1->type == T_VECTOR && v2->type == T_VECTOR) {
 
 			}
 
@@ -225,11 +225,13 @@ Action process (std::string &cmd, Runtime& rnt, bool del = false) {
 		auto vectors = popFromStream (ss, 2);
 		bool wellTyped = ensureTypeCoherence (vectors, { T_VECTOR, T_VECTOR }, rnt);
 
+		std::cout << "Data is well typed " << wellTyped << std::endl;
+
 		if (wellTyped) {
 			Object *v1_obj = rnt.obj_map[vectors[0]];
 			Object *v2_obj = rnt.obj_map[vectors[1]];
 
-			if (v1_obj->name == T_VECTOR && v2_obj->name == T_VECTOR) {
+			if (v1_obj->type == T_VECTOR && v2_obj->type == T_VECTOR) {
 				Vector *v1 = (Vector *)v1_obj;
 				Vector *v2 = (Vector *)v2_obj;
 
@@ -243,7 +245,7 @@ Action process (std::string &cmd, Runtime& rnt, bool del = false) {
 			}
 			else {
 				cout << "Projection not supported between entered data types." << std::endl;
-				return Action ("proj", 0, false);
+				return Action ("proj", nullptr, false);
 			}
 		}
 
@@ -256,10 +258,10 @@ Action process (std::string &cmd, Runtime& rnt, bool del = false) {
 		if (rnt.keyInMap (rnt.obj_map, alias)) {
 			Object *obj_ptr = rnt.obj_map[alias];
 
-			if (obj_ptr->name == T_MATRIX) {
+			if (obj_ptr->type == T_MATRIX) {
 				delete (Matrix *)obj_ptr;
 			}
-			else if (obj_ptr->name == T_VECTOR) {
+			else if (obj_ptr->type == T_VECTOR) {
 				delete (Vector *)obj_ptr;
 			}
 			else {
@@ -284,7 +286,7 @@ Action process (std::string &cmd, Runtime& rnt, bool del = false) {
 
 			Object *returnObj = 0;
 
-			if (obj_ptr1->name == T_MATRIX && obj_ptr2->name == T_MATRIX) {
+			if (obj_ptr1->type == T_MATRIX && obj_ptr2->type == T_MATRIX) {
 				returnObj = matrix_Operations ((Matrix *)obj_ptr1, (Matrix *)obj_ptr2, oper);
 
 				if (returnObj == 0) {
@@ -292,28 +294,26 @@ Action process (std::string &cmd, Runtime& rnt, bool del = false) {
 					return Action ("calc mmult", 0);
 				}
 
-				returnObj->name = T_MATRIX;
+				returnObj->type = T_MATRIX;
 
 				return Action ("calc mmult", returnObj, del);
 
 			}
-			else if (obj_ptr1->name == T_MATRIX && obj_ptr2->name == T_VECTOR) {
-				returnObj = matrix_vector_Operations (obj_ptr1->get<Matrix> (), obj_ptr2->get<Vector> (), oper);
-				returnObj->name = T_VECTOR;
+			else if (obj_ptr1->type == T_MATRIX && obj_ptr2->type == T_VECTOR) {
+				returnObj = matrix_vector_operations (obj_ptr1->get<Matrix> (), obj_ptr2->get<Vector> (), oper);
+				returnObj->type = T_VECTOR;
 
 				return Action ("calc mvmult", returnObj, del);
 
 			}
-			else if (obj_ptr1->name == T_VECTOR && obj_ptr2->name == T_VECTOR) {
+			else if (obj_ptr1->type == T_VECTOR && obj_ptr2->type == T_VECTOR) {
 				if (oper == "*") {
 					string processString = "dot " + first + " " + second;
-					process (processString, rnt, true);
-
-					return Action ("calc dot", 0);
+					return process (processString, rnt, del);
 				}
 				else {
-					returnObj = vector_Operations (obj_ptr1->get <Vector> (), obj_ptr2->get <Vector> (), oper);
-					returnObj->name = T_VECTOR;
+					returnObj = vector_operations (obj_ptr1->get <Vector> (), obj_ptr2->get <Vector> (), oper);
+					returnObj->type = T_VECTOR;
 
 					return Action ("calc voper", returnObj, del);
 				}

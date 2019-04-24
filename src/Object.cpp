@@ -2,7 +2,7 @@
 
 
 Object::Object (int name) {
-	this->name = name;
+	this->type = name;
 }
 
 std::string Object::typeAsString (int type)

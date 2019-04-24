@@ -6,8 +6,8 @@ void Runtime::store_In_Object_Map (std::string key, Object *obj_ptr) {
 
 		Object *obj_ptr_old = obj_map[key];
 
-		if (obj_ptr->name == T_MATRIX) { delete (Matrix *)obj_ptr_old; }
-		else if (obj_ptr->name == T_VECTOR) { delete (Vector *)obj_ptr_old; }
+		if (obj_ptr->type == T_MATRIX) { delete (Matrix *)obj_ptr_old; }
+		else if (obj_ptr->type == T_VECTOR) { delete (Vector *)obj_ptr_old; }
 
 		obj_map[key] = obj_ptr;
 
@@ -18,7 +18,7 @@ void Runtime::store_In_Object_Map (std::string key, Object *obj_ptr) {
 }
 
 int Runtime::savedType (const std::string &s) {
-	return keyInMap (obj_map, s) ? obj_map[s]->name : T_NULL;
+	return keyInMap (obj_map, s) ? obj_map[s]->type : T_NULL;
 }
 
 

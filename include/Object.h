@@ -15,7 +15,7 @@
 
 class Object {
 public:
-	int name;
+	int type;
 
 	Object (int name);
 

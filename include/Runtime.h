@@ -26,16 +26,16 @@ struct Action { // Simple class to store an obj_ptr and name of the action
 				 * Checks all possible name types and casts to the appropriate one before releasing the memory
 				 */
 
-				if (obj_ptr->name == T_MATRIX) {
+				if (obj_ptr->type == T_MATRIX) {
 					Matrix *m_ptr = (Matrix *)obj_ptr;
 					delete m_ptr;
 
 				}
-				else if (obj_ptr->name == T_VECTOR) {
+				else if (obj_ptr->type == T_VECTOR) {
 					Vector *v_ptr = (Vector *)obj_ptr;
 					delete v_ptr;
 				}
-				else if (obj_ptr->name == T_VALUE) {
+				else if (obj_ptr->type == T_VALUE) {
 					Value<double> *value_ptr = (Value<double> *) obj_ptr; // Casts pointer to Value<double> because that is the only used one
 					delete value_ptr;
 				}
