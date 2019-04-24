@@ -21,15 +21,9 @@
 #include "include/Parser.h"
 
 
-using namespace std;
-
-std::map < std::string, Response> action_map;
-
-
 void entryMessage () {
 	std::cout << "       ----- Linear Algebra -----" << std::endl;
 }
-
 
 
 int main () {

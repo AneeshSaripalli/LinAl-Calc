@@ -5,21 +5,18 @@
 #include "Action.h"
 #include "Runtime.h"
 #include "InputUtils.h"
+#include "Defines.h"
 
 #define min(x,y) (x < y ? x : y);
 
 #ifndef STDMATHLIB_H
 #define STDMATHLIB_H
 
-using Response = Action (*)(std::stringstream&, Runtime&, bool del);
-
-using namespace std;
-
 namespace stdlib {
 	Response define{
 		[] (std::stringstream& ss, Runtime& rnt, bool del = false)
 		{
-			auto decs = InputUtils::popFromStream (ss, 2);
+			auto decs = InputUtils::pop_from_stream (ss, 2);
 
 			std::string type = decs[0];
 			std::string alias = decs[1];
@@ -45,7 +42,7 @@ namespace stdlib {
 				return Action (string ("define"), 0);
 			}
 
-			rnt.store_In_Object_Map (alias, newObj);
+			rnt.store_in_object_map (alias, newObj);
 
 			return Action (string ("define"), newObj, false);
 		}
@@ -55,7 +52,7 @@ namespace stdlib {
 		{
 			for (auto it = rnt.obj_map.begin (); it != rnt.obj_map.end (); it++) {
 				cout << "-------------------------" << std::endl;
-				cout << "Object " << it->first << " - " << Object::typeAsString (rnt.savedType (it->first)) << std::endl;
+				cout << "Object " << it->first << " - " << Object::typeAsString (rnt.saved_type (it->first)) << std::endl;
 				it->second->print ();
 				cout << "-------------------------" << std::endl;
 			}
@@ -66,10 +63,10 @@ namespace stdlib {
 	Response delete_from_runtime{
 		[] (std::stringstream& ss, Runtime& rnt, bool del)
 		{
-		auto aliasVec = InputUtils::popFromStream (ss, 1);
+		auto aliasVec = InputUtils::pop_from_stream (ss, 1);
 			std::string alias = aliasVec[0];
 
-			if (rnt.keyInMap (rnt.obj_map, alias)) {
+			if (rnt.key_in_map (rnt.obj_map, alias)) {
 				Object *obj_ptr = rnt.obj_map[alias];
 
 				if (obj_ptr->type == T_MATRIX) {
@@ -95,7 +92,7 @@ namespace stdlib {
 
 		std::string cmd = ss.str ();
 
-		if (rnt.savedType (cmd) != T_NULL)
+		if (rnt.saved_type (cmd) != T_NULL)
 		{
 			return Action (string ("default interp"), rnt.obj_map[cmd]);
 		}
@@ -110,7 +107,7 @@ namespace stdlib {
 		{
 			std::string cmd = ss.str ();
 
-			auto aliasVec = InputUtils::popFromStream (ss, 1);
+			auto aliasVec = InputUtils::pop_from_stream (ss, 1);
 			std::string alias = aliasVec[0];
 
 			int start_pos = cmd.find (alias, 6);
@@ -127,7 +124,7 @@ namespace stdlib {
 				cout << "-> Assignment function does not have a return type." << std::endl;
 			}
 			else {
-				rnt.store_In_Object_Map (alias, data_ptr);
+				rnt.store_in_object_map (alias, data_ptr);
 			}
 
 			return Action ("assign", 0);
@@ -135,10 +132,10 @@ namespace stdlib {
 	};
 	Response output{
 	[] (std::stringstream& ss, Runtime& rnt, bool del = false) {
-		auto aliasVec = InputUtils::popFromStream (ss, 1);
+		auto aliasVec = InputUtils::pop_from_stream (ss, 1);
 		std::string alias = aliasVec[0];
 
-		int type = rnt.savedType (alias);
+		int type = rnt.saved_type (alias);
 
 		if (type != T_NULL) {
 			return Action (string ("print"), rnt.obj_map[alias], false);
@@ -228,8 +225,8 @@ namespace mathlib {
 	Response projection{
 		[] (std::stringstream& ss, Runtime& rnt, bool del)
 		{
-		auto vectors = InputUtils::popFromStream (ss, 2);
-			bool wellTyped = InputUtils::ensureTypeCoherence (vectors, { T_VECTOR, T_VECTOR }, rnt);
+		auto vectors = InputUtils::pop_from_stream (ss, 2);
+			bool wellTyped = InputUtils::ensure_type_validity (vectors, { T_VECTOR, T_VECTOR }, rnt);
 
 			std::cout << "Data is well typed " << wellTyped << std::endl;
 
@@ -260,10 +257,10 @@ namespace mathlib {
 	Response calculate{
 		[] (std::stringstream& ss, Runtime& rnt, bool del)
 		{
-		auto expVec = InputUtils::popFromStream (ss, 3);
+		auto expVec = InputUtils::pop_from_stream (ss, 3);
 			string first = expVec[0], oper = expVec[1], second = expVec[2];
 
-			if (rnt.keyInMap (rnt.obj_map, first) || rnt.keyInMap (rnt.obj_map, second)) {
+			if (rnt.key_in_map (rnt.obj_map, first) || rnt.key_in_map (rnt.obj_map, second)) {
 
 				Object *obj_ptr1 = rnt.obj_map[first];
 				Object *obj_ptr2 = rnt.obj_map[second];
@@ -316,7 +313,7 @@ namespace mathlib {
 			Matrix *m_ptr = 0;
 			Vector *v_ptr = 0;
 
-			if (rnt.savedType (mat_a) == T_MATRIX && rnt.savedType (vec_b) == T_VECTOR) {
+			if (rnt.saved_type (mat_a) == T_MATRIX && rnt.saved_type (vec_b) == T_VECTOR) {
 				m_ptr = (Matrix *)rnt.obj_map[mat_a];
 				v_ptr = (Vector *)rnt.obj_map[vec_b];
 			}
@@ -382,7 +379,7 @@ namespace mathlib {
 			string alias;
 			ss >> alias;
 
-			if (rnt.savedType (alias) == T_MATRIX) {
+			if (rnt.saved_type (alias) == T_MATRIX) {
 				Matrix *m_ptr = (Matrix *)rnt.obj_map[alias];
 
 				Matrix *reduced = m_ptr->gaussianReducedForm ();
@@ -414,7 +411,7 @@ namespace mathlib {
 
 			Matrix *m;
 
-			if (rnt.savedType (alias) == T_MATRIX) {
+			if (rnt.saved_type (alias) == T_MATRIX) {
 				m = (Matrix *)rnt.obj_map[alias];
 			}
 			else {
@@ -438,7 +435,7 @@ namespace mathlib {
 
 			Matrix *m = nullptr;
 
-			if (rnt.savedType (alias) == T_MATRIX) {
+			if (rnt.saved_type (alias) == T_MATRIX) {
 				m = (Matrix *)rnt.obj_map[alias];
 			}
 			else {
@@ -460,7 +457,7 @@ namespace mathlib {
 
 			double dot = 0;
 
-			if (rnt.savedType (v1) == T_VECTOR && rnt.savedType (v2) == T_VECTOR) {
+			if (rnt.saved_type (v1) == T_VECTOR && rnt.saved_type (v2) == T_VECTOR) {
 				v1_ptr = (Vector *)rnt.obj_map[v1];
 				v2_ptr = (Vector *)rnt.obj_map[v2];
 
@@ -486,7 +483,7 @@ namespace mathlib {
 
 			Matrix *m;
 
-			if (rnt.savedType (alias) == T_MATRIX) {
+			if (rnt.saved_type (alias) == T_MATRIX) {
 				m = (Matrix *)rnt.obj_map[alias];
 			}
 			else {

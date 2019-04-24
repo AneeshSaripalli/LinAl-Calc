@@ -1,8 +1,8 @@
 #include "../include/Runtime.h"
 
 
-void Runtime::store_In_Object_Map (std::string key, Object *obj_ptr) {
-	if (keyInMap (obj_map, key)) {
+void Runtime::store_in_object_map (std::string key, Object *obj_ptr) {
+	if (key_in_map (obj_map, key)) {
 
 		Object *obj_ptr_old = obj_map[key];
 
@@ -17,8 +17,8 @@ void Runtime::store_In_Object_Map (std::string key, Object *obj_ptr) {
 	}
 }
 
-int Runtime::savedType (const std::string &s) {
-	return keyInMap (obj_map, s) ? obj_map[s]->type : T_NULL;
+int Runtime::saved_type (const std::string &s) {
+	return key_in_map (obj_map, s) ? obj_map[s]->type : T_NULL;
 }
 
 
@@ -37,7 +37,7 @@ Runtime::~Runtime ()
 
 
 template<class Key, class Value>
-bool Runtime::keyInMap (std::map<Key, Value> &m, Key key) {
+bool Runtime::key_in_map (std::map<Key, Value> &m, Key key) {
 	auto pos = m.find (key);
 	if (pos == m.end ())
 		return false;

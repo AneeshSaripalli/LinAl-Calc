@@ -21,11 +21,11 @@ public:
 	virtual ~Runtime ();
 
 	template<class Key, class Value>
-	bool keyInMap (std::map<Key, Value> &m, Key key); // Returns whether or not a key exists in a map
+	bool key_in_map (std::map<Key, Value> &m, Key key); // Returns whether or not a key exists in a map
 
-	int savedType (const std::string &name); // Returns the saved type <matrix/vector> of an object if it exists in the map, else null
+	int saved_type (const std::string &name); // Returns the saved type <matrix/vector> of an object if it exists in the map, else null
 
-	void store_In_Object_Map (std::string key, Object *obj_ptr); // Stores a key: string, value:obj_ptr pair in the obj_map map
+	void store_in_object_map (std::string key, Object *obj_ptr); // Stores a key: string, value:obj_ptr pair in the obj_map map
 
 	std::unique_ptr<Parser> parser;
 

@@ -51,7 +51,7 @@ Vector::Vector ()
 	}
 }
 
-double Vector::evaluateAsPolynomial (double x)
+double Vector::evaluate_as_polynomial (double x)
 {
 	double result = 0;
 
@@ -103,7 +103,7 @@ void Vector::append (Vector& a)
 	}
 }
 
-bool Vector::isZeroVector ()
+bool Vector::is_zero_vector ()
 {
 	for (int i = 0; i < length; i++)
 	{
@@ -139,7 +139,7 @@ double& Vector::operator[](int index)
 	return values[index];
 }
 
-void Vector::subtractVector (Vector &v)
+void Vector::subtract_vector (Vector &v)
 {
 	if (length != v.length)
 	{
