@@ -26,6 +26,5 @@ add_executable(LinAl_Calc
         src/Vector.cpp
 		src/Action.cpp
 		src/InputUtils.cpp
-		src/Runtime.cpp
 		src/Parser.cpp
         main.cpp)
