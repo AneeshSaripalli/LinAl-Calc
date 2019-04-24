@@ -22,15 +22,6 @@ int Runtime::savedType (const std::string &s) {
 }
 
 
-Runtime::~Runtime ()
-{
-	for (auto it = obj_map.begin (); it != obj_map.end (); it++) {
-		delete it->second;
-	}
-
-	obj_map.clear ();
-}
-
 
 template<class Key, class Value>
 bool Runtime::keyInMap (std::map<Key, Value> &m, Key key) {
