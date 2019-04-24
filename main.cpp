@@ -17,11 +17,11 @@
 #include "include/Runtime.h"
 #include "include/Action.h"
 #include "include/InputUtils.h"
+#include "include/Defines.h"
 
 #define min(x,y) (x < y ? x : y);
 
 using namespace std;
-using Response = Action (*)(std::stringstream&, Runtime&, bool del);
 
 std::map < std::string, Response> action_map;
 
