@@ -59,15 +59,24 @@ Matrix *matrix_Operations (Matrix *m1, Matrix *m2, std::string oper) {
 	}
 }
 
-Vector *matrix_vector_Operations (Matrix *m1, Vector *v1, std::string oper) {
+Vector *matrix_vector_operations (Matrix *m1, Vector *v1, std::string oper) {
 	if (oper == "*") { return (*m1) * (*v1); }
 	else { return 0; }
 }
 
-Vector *vector_Operations (Vector *v1, Vector *v2, std::string oper) {
+Vector *vector_operations (Vector *v1, Vector *v2, std::string oper) {
 	if (oper == "+") { return (*v1) + (*v2); }
 	else if (oper == "-") { return (*v1) - (*v2); }
 	else { return 0; }
 }
 
+// Simple utility function to evaluate powers
+int pow (int base, int power) {
+	int result = 1;
+	for (int i = 0; i < power; i++) {
+		result *= base;
+	}
+
+	return result;
+}
 #endif
