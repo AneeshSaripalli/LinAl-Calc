@@ -1,5 +1,6 @@
 #include <sstream>
 #include <iostream>
+#include <string>
 #include <vector>
 
 #include "Action.h"
@@ -22,8 +23,8 @@ namespace stdlib {
 			std::string alias = decs[1];
 
 			if (alias.size () == 0 || type.size () == 0) {
-				cout << "-> Data can not be empty strings. Type \"help\" for help." << std::endl;
-				return Action (string ("define"), 0);
+				std::cout << "-> Data can not be empty strings. Type \"help\" for help." << std::endl;
+				return Action (std::string ("define"), 0);
 			}
 
 			Object *newObj;
@@ -38,23 +39,23 @@ namespace stdlib {
 				newObj = new Value<double> ();
 			}
 			else {
-				cout << "-> Data format not recognized.\n define <matrix/vector> <name>" << std::endl;
-				return Action (string ("define"), 0);
+				std::cout << "-> Data format not recognized.\n define <matrix/vector> <name>" << std::endl;
+				return Action (std::string ("define"), 0);
 			}
 
 			rnt.store_in_object_map (alias, newObj);
 
-			return Action (string ("define"), newObj, false);
+			return Action (std::string ("define"), newObj, false);
 		}
 	};
 	Response memory{
 		[] (std::stringstream& ss, Runtime& rnt, bool del)
 		{
 			for (auto it = rnt.obj_map.begin (); it != rnt.obj_map.end (); it++) {
-				cout << "-------------------------" << std::endl;
-				cout << "Object " << it->first << " - " << Object::typeAsString (rnt.saved_type (it->first)) << std::endl;
+				std::cout << "-------------------------" << std::endl;
+				std::cout << "Object " << it->first << " - " << Object::typeAsString (rnt.saved_type (it->first)) << std::endl;
 				it->second->print ();
-				cout << "-------------------------" << std::endl;
+				std::cout << "-------------------------" << std::endl;
 			}
 
 			return Action ("memory", 0);
@@ -75,13 +76,19 @@ namespace stdlib {
 				else if (obj_ptr->type == T_VECTOR) {
 					delete (Vector *)obj_ptr;
 				}
-				else {
-					cout << "-> Object with the name " << alias << " has not been initialized in this run time." << std::endl;
+				else
+				{
+					std::cout << "-> Object with the name " << alias << " has not been initialized in this run time." << std::endl;
 					return Action ("delete", 0);
 				}
 
 				rnt.obj_map.erase (alias);
 
+				return Action ("delete", 0);
+			}
+			else
+			{
+				std::cout << "-> Object with the name " << alias << " has not been initialized in this run time." << std::endl;
 				return Action ("delete", 0);
 			}
 		}
@@ -94,7 +101,7 @@ namespace stdlib {
 
 		if (rnt.saved_type (cmd) != T_NULL)
 		{
-			return Action (string ("default interp"), rnt.obj_map[cmd]);
+			return Action (std::string ("default interp"), rnt.obj_map[cmd]);
 		}
 		else {
 			std::cout << "-> Command " << cmd << " not recognized. Type \"help\" for help." << std::endl;
@@ -121,7 +128,7 @@ namespace stdlib {
 			Object *data_ptr = result.obj_ptr;
 
 			if (data_ptr == 0) {
-				cout << "-> Assignment function does not have a return type." << std::endl;
+				std::cout << "-> Assignment function does not have a return type." << std::endl;
 			}
 			else {
 				rnt.store_in_object_map (alias, data_ptr);
@@ -138,10 +145,10 @@ namespace stdlib {
 		int type = rnt.saved_type (alias);
 
 		if (type != T_NULL) {
-			return Action (string ("print"), rnt.obj_map[alias], false);
+			return Action (std::string ("print"), rnt.obj_map[alias], false);
 		}
 		else {
-			cout << "-> Variable \"" << alias << "\" not defined during this session." << std::endl;
+			std::cout << "-> Variable \"" << alias << "\" not defined during this session." << std::endl;
 		}
 
 		return Action ("recall", 0);
@@ -247,7 +254,7 @@ namespace mathlib {
 
 				}
 				else {
-					cout << "Projection not supported between entered data types." << std::endl;
+					std::cout << "Projection not supported between entered data types." << std::endl;
 					return Action ("proj", nullptr, false);
 				}
 			}
@@ -258,7 +265,7 @@ namespace mathlib {
 		[] (std::stringstream& ss, Runtime& rnt, bool del)
 		{
 		auto expVec = InputUtils::pop_from_stream (ss, 3);
-			string first = expVec[0], oper = expVec[1], second = expVec[2];
+			std::string first = expVec[0], oper = expVec[1], second = expVec[2];
 
 			if (rnt.key_in_map (rnt.obj_map, first) || rnt.key_in_map (rnt.obj_map, second)) {
 
@@ -271,7 +278,7 @@ namespace mathlib {
 					returnObj = matrix_Operations ((Matrix *)obj_ptr1, (Matrix *)obj_ptr2, oper);
 
 					if (returnObj == 0) {
-						cout << oper << " is not an acceptable operation between two matrices." << std::endl;
+						std::cout << oper << " is not an acceptable operation between two matrices." << std::endl;
 						return Action ("calc mmult", 0);
 					}
 
@@ -289,7 +296,7 @@ namespace mathlib {
 				}
 				else if (obj_ptr1->type == T_VECTOR && obj_ptr2->type == T_VECTOR) {
 					if (oper == "*") {
-						string processString = "dot " + first + " " + second;
+						std::string processString = "dot " + first + " " + second;
 						return rnt.parser->process (processString, rnt, del);
 					}
 					else {
@@ -305,10 +312,11 @@ namespace mathlib {
 	Response approx_sol{
 		[] (std::stringstream& ss, Runtime& rnt, bool del)
 		{
-			string mat_a;
-			string vec_b;
+			auto aliases = InputUtils::pop_from_stream (ss, 2);
 
-			ss >> mat_a >> vec_b;
+			std::string mat_a = aliases[0];
+			std::string vec_b = aliases[1];
+
 
 			Matrix *m_ptr = 0;
 			Vector *v_ptr = 0;
@@ -319,7 +327,7 @@ namespace mathlib {
 			}
 			else {
 				if (mat_a != "" || vec_b != "") {
-					cout << "-> Data input format did not match the appropriate format." << std::endl;
+					std::cout << "-> Data input format did not match the appropriate format." << std::endl;
 				}
 
 				*m_ptr = Matrix ();
@@ -335,20 +343,20 @@ namespace mathlib {
 		[] (std::stringstream& ss, Runtime& rnt, bool del)
 		{
 			int data_points;
-			cout << "-> Enter the number of data points: ";
-			cin >> data_points;
+			std::cout << "-> Enter the number of data points: ";
+			std::cin >> data_points;
 
 			if (data_points <= 1) {
-				cout << "-> Enter at least 2 data points: " << std::endl;
+				std::cout << "-> Enter at least 2 data points: " << std::endl;
 				return Action ("least_squares", 0);
 			}
 
 			int power;
-			cout << "-> Enter the power to evaluate the data set at: ";
-			cin >> power;
+			std::cout << "-> Enter the power to evaluate the data set at: ";
+			std::cin >> power;
 
 			if (power > 10) {
-				cout << "-> Power is too great." << std::endl;
+				std::cout << "-> Power is too great." << std::endl;
 				return Action ("least_squares", 0);
 			}
 
@@ -358,8 +366,8 @@ namespace mathlib {
 
 			for (int row = 0; row < data_points; row++) {
 				int x, y;
-				cout << "-> Enter x, y: ";
-				cin >> x >> y;
+				std::cout << "-> Enter x, y: ";
+				std::cin >> x >> y;
 
 				for (int col = power; col >= 0; col--) {
 					(*data_mat)[row][power - col] = pow (x, col);
@@ -376,7 +384,7 @@ namespace mathlib {
 	Response solve_rank{
 		[] (std::stringstream& ss, Runtime& rnt, bool del)
 		{
-			string alias;
+			std::string alias;
 			ss >> alias;
 
 			if (rnt.saved_type (alias) == T_MATRIX) {
@@ -384,20 +392,20 @@ namespace mathlib {
 
 				Matrix *reduced = m_ptr->gaussianReducedForm ();
 
-				cout << "-> The rank of the matrix is " << reduced->countPivots () << "." << std::endl;
+				std::cout << "-> The rank of the matrix is " << reduced->countPivots () << "." << std::endl;
 
 				delete reduced;
 			}
 			else {
 				if (alias != "") {
-					cout << "-> A matrix with the name of " << alias << " was not found." << std::endl;
+					std::cout << "-> A matrix with the name of " << alias << " was not found." << std::endl;
 				}
 
 				Matrix m = Matrix ();
 
 				m.gaussianReduce ();
 
-				cout << "-> The rank of the matrix is " << m.countPivots () << "." << std::endl;
+				std::cout << "-> The rank of the matrix is " << m.countPivots () << "." << std::endl;
 			}
 
 			return Action ("rank", 0);
@@ -406,8 +414,7 @@ namespace mathlib {
 	Response solve_inverse{
 		[] (std::stringstream& ss, Runtime& rnt, bool del)
 		{
-			string alias;
-			ss >> alias;
+			std::string alias = InputUtils::pop_from_stream (ss, 1)[0];
 
 			Matrix *m;
 
@@ -430,7 +437,7 @@ namespace mathlib {
 	Response determinant{
 		[] (std::stringstream& ss, Runtime& rnt, bool del)
 		{
-			string alias;
+			std::string alias;
 			ss >> alias;
 
 			Matrix *m = nullptr;
@@ -478,7 +485,7 @@ namespace mathlib {
 	Response solve_basis{
 		[] (std::stringstream& ss, Runtime& rnt, bool del)
 		{
-			string alias;
+			std::string alias;
 			ss >> alias;
 
 			Matrix *m;
@@ -506,7 +513,7 @@ namespace mathlib {
 				}
 			}
 
-			cout << "-> Basis Vectors for the Row Space [Read Horizontal]: " << std::endl;
+			std::cout << "-> Basis Vectors for the Row Space [Read Horizontal]: " << std::endl;
 
 			for (int i = 0; i < min_dim; i++) {
 				if (basisV[i]) {
@@ -514,7 +521,7 @@ namespace mathlib {
 				}
 			}
 
-			cout << "-> Basis Vectors for the Column Space [Read Vertical]: " << std::endl;
+			std::cout << "-> Basis Vectors for the Column Space [Read Vertical]: " << std::endl;
 
 			for (int i = 0; i < min_dim; i++) {
 				if (basisV[i]) {

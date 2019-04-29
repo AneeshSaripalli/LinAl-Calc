@@ -17,12 +17,12 @@ public:
 
     double& operator[](int index);
     void scale(double scalar);
-    void subtractVector(Vector& v);
+    void subtract_vector(Vector& v);
     void add(double x);
     void append(Vector& a);
     void round_off();
-    double evaluateAsPolynomial(double x);
-    bool isZeroVector();
+    double evaluate_as_polynomial(double x);
+    bool is_zero_vector();
     Vector* unit_vector();
     Vector* cross_product(Vector&vec );
 

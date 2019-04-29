@@ -30,7 +30,7 @@ bool InputUtils::ensure_type_validity (std::vector<std::string> strs, std::vecto
 }
 
 void InputUtils::trim (std::string &s) { // Function to trim off leading or trailing spaces
-	for (int i = 0; i < s.length (); i++) {
+	for (int i = 0u; i < s.length (); i++) {
 		if (s[i] == ' ') {
 			s.erase (i, 1);
 		}

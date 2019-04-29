@@ -348,7 +348,7 @@ Vector *Matrix::solveUpperTriangular () {
 	for (int i = rows - 1; i >= 0; i--) {
 		Vector *row = matrix[i];
 
-		if (row->isZeroVector ()) {
+		if (row->is_zero_vector ()) {
 			hasInfiSol = true;
 			continue;
 		}
@@ -367,7 +367,7 @@ Vector *Matrix::solveUpperTriangular () {
 
 			double reducVal = (*reduc)[i];
 
-			reduc->subtractVector (*((*row) * reducVal));
+			reduc->subtract_vector (*((*row) * reducVal));
 		}
 	}
 
@@ -430,7 +430,7 @@ void Matrix::gaussianReduce () {
 
 			Vector *scaled = (*pivotVector) * scale;
 
-			row->subtractVector (*scaled);
+			row->subtract_vector (*scaled);
 
 			delete scaled;
 		}

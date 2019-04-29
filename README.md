@@ -1,6 +1,12 @@
-# Matrix Functions
-Offers a command line utility for matrix functions.
-## Available functions
+# Getting Started
+## Build Using CMake
+- `cd` into the git root folder
+- `mkdir build` to create a build folder
+- `cd build` to enter the build folder
+- `cmake ..` to generate the build folder
+- `cmake --build . --target LinAl_Calc` to build the executable - current doesn't work
+
+## Functionality
 - Addition / Subtraction
 - Vector / Matrix Multiplication
 - Least Squares Regression 
